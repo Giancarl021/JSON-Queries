@@ -1,6 +1,5 @@
 import jmespath from 'jmespath';
 import jsonpath from 'jsonpath';
-import jsonquery from 'json-query';
 
 export default [
     {
@@ -12,10 +11,5 @@ export default [
         label: 'JSON Path',
         name: 'jsonpath',
         engine: jsonpath.query.bind(jsonpath)
-    },
-    {
-        label: 'JSON Query',
-        name: 'jsonquery',
-        engine: obj => jsonquery(JSON.stringify(obj))
     }
 ];

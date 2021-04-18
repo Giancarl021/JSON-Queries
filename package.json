@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "jmespath": "^0.15.0",
-    "json-query": "^2.2.2",
     "jsonpath": "^1.1.1",
     "sass": "^1.32.10",
     "sweetalert2": "^10.16.3"
