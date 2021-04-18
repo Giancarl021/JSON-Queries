@@ -18,7 +18,7 @@ export default [
     {
         label: 'Ala SQL',
         name: 'alasql',
-        placeholder: 'SELECT a, sum(b) FROM ?',
+        placeholder: 'SELECT a, sum(b) FROM ? GROUP BY a',
         engine: (input, query) => alasql(query, [ input ])
     }
 ];

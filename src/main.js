@@ -3,8 +3,9 @@ import './sass/style.scss';
 import Swal from 'sweetalert2/dist/sweetalert2.all.min.js';
 import * as storage from './storage';
 import engines from './engines';
+import defaultJson from './placeholders/json';
 
-let cmi, cmo;
+let cmi, cmo, engine;
 
 function init() {
     const options = {
@@ -36,10 +37,17 @@ function init() {
     const $input = document.getElementById('query');
     const $button = document.getElementById('run');
 
-    const selected = storage.get('selected-engine');
+    updateEngine();
+    changePlaceholder($input, engine.placeholder);
+    setDefaultJSON();
 
-    $select.insertAdjacentHTML('beforeend', engines.reduce((acc, engine) => `${acc}\n<option value="${engine.name}" ${engine.name === selected ? 'selected' : ''}>${engine.label}</option>`, ''));
-    $select.onchange = event => setSelectedEngine(event.target.value);
+    $select.insertAdjacentHTML('beforeend', engines.reduce((acc, eng) => `${acc}\n<option value="${eng.name}" ${eng.name === engine.name ? 'selected' : ''}>${eng.label}</option>`, ''));
+    $select.onchange = event => {
+        setSelectedEngine(event.target.value);
+        updateEngine();
+        changeValue($input, '');
+        changePlaceholder($input, engine.placeholder);        
+    };
 
     $button.onclick = () => query($input, $select);
 }
@@ -48,9 +56,17 @@ function setSelectedEngine(value) {
     storage.set('selected-engine', value);
 }
 
+function changePlaceholder($input, value) {
+    $input.placeholder = value;
+}
+
+function changeValue($input, value) {
+    $input.value = value;
+}
+
 function query($input, $select) {
     const option = $select.value;
-    const { value } = $input;
+    const { value, placeholder } = $input;
     let input, output;
 
     try {
@@ -68,7 +84,10 @@ function query($input, $select) {
     if (!engine) return;
 
     try {
-        output = engine.engine(input, value);
+        if (!value && placeholder) {
+            $input.value = placeholder;
+        }
+        output = engine.engine(input, value || placeholder);
     } catch (err) {
         Swal.fire({
             icon: 'error',
@@ -79,6 +98,17 @@ function query($input, $select) {
     }
 
     cmo.setValue(JSON.stringify(output, null, 4));
+}
+
+function updateEngine() {
+    const selected = storage.get('selected-engine');
+    engine = engines.find(engine => engine.name === selected);
+}
+
+function setDefaultJSON() {
+    cmi.setValue(
+        JSON.stringify(defaultJson, null, 4)
+    );
 }
 
 document.addEventListener('DOMContentLoaded', init);
