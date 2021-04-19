@@ -102,6 +102,11 @@ function query($input, $select) {
 
 function updateEngine() {
     const selected = storage.get('selected-engine');
+    if (!selected) {
+        engine = engines[0];
+        return;
+    }
+
     engine = engines.find(engine => engine.name === selected);
 }
 
